@@ -1,0 +1,161 @@
+consumes:
+- json
+info:
+  description: API Server for the Garden Sentry Application
+  title: Garden Sentry API
+  version: 1.0.0
+paths:
+  /v1/events/:
+    get:
+      tags:
+        - events
+      operationd: getOne
+      parameters:
+        - name: since
+          in: query
+          type: integer
+          format: int64
+        - name: limit
+          in: query
+          type: integer
+          format: int32
+          default: 20
+      responses:
+        200:
+          description: List the GS events
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/event"
+        default:
+          description: generic error response
+          schema:
+            $ref: "#/definitions/error"
+    post:
+      tags:
+        - events
+      operationd: addOne
+      parameters:
+        - name: body
+          in: body
+          schema:
+            $ref: "#/definitions/event"
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/event"
+        default:
+          description: error
+          schema:
+            $ref: "#/definitions/error"
+paths:
+  /v1/events/{id}:
+    parameters:
+      - type: integer
+        format: int64
+        name: id
+        in: path
+        required: true
+    get:
+      tags:
+        - events
+      operationId: getOne
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/event'
+        default:
+          description: error
+          schema:
+            $ref: '#/definitions/error'
+    put:
+      tags:
+        - events
+      operationId: updateOne
+      parameters:
+        - name: body
+          in: body
+          schema:
+            $ref: "#/definitions/event"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/event"
+        default:
+          description: error
+          schema:
+            $ref: "#/definitions/error"
+    delete:
+      tags:
+        - events
+      operationId: destroyOne
+      responses:
+        204:
+          description: Deleted
+        default:
+          description: error
+          schema:
+            $ref: "#/definitions/error"
+paths:
+  /v1/events/{id}/vids:
+    parameters:
+      - type: integer
+        format: int64
+        name: id
+        in: path
+        required: true
+    post:
+      tags:
+        - events
+        - vids
+      operationId: uploadVideo
+      responses:
+        201:
+          description: OK
+          schema:
+            $ref: '#/definitions/event'
+        default:
+          description: error
+          schema:
+            $ref: '#/definitions/error'
+produces:
+- json
+schemes:
+- http
+swagger: "2.0"
+definitions:
+  error:
+    type: object
+    required:
+      - message
+    properties:
+      code:
+        type: integer
+        format: int64
+      message:
+        type: string
+  event:
+    type: object
+    required:
+      - description
+      - type
+      - timestamp
+    properties:
+      id:
+        type: integer
+        format: int64
+        readOnly: true
+      description:
+        type: string
+        minLength: 1
+      type:
+        type: string
+        minLength: 1
+      timestamp:
+        type: string
+      vidUrl:
+        type: string
+        minLength: 1
