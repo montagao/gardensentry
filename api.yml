@@ -1,15 +1,13 @@
 consumes:
-- json
+- application/json
 info:
-  description: API Server for the Garden Sentry Application
+  description: For use with the Garden Sentry application
   title: Garden Sentry API
   version: 1.0.0
 paths:
   /v1/events/:
     get:
-      tags:
-        - events
-      operationd: getOne
+      operationId: getEvents
       parameters:
         - name: since
           in: query
@@ -32,9 +30,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
     post:
-      tags:
-        - events
-      operationd: addOne
+      operationId: addEvent
       parameters:
         - name: body
           in: body
@@ -49,7 +45,6 @@ paths:
           description: error
           schema:
             $ref: "#/definitions/error"
-paths:
   /v1/events/{id}:
     parameters:
       - type: integer
@@ -58,9 +53,7 @@ paths:
         in: path
         required: true
     get:
-      tags:
-        - events
-      operationId: getOne
+      operationId: getEventById
       responses:
         200:
           description: OK
@@ -71,9 +64,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
     put:
-      tags:
-        - events
-      operationId: updateOne
+      operationId: updateEvent
       parameters:
         - name: body
           in: body
@@ -89,9 +80,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
     delete:
-      tags:
-        - events
-      operationId: destroyOne
+      operationId: deleteEvent
       responses:
         204:
           description: Deleted
@@ -108,10 +97,15 @@ paths:
         in: path
         required: true
     post:
-      tags:
-        - events
-        - vids
-      operationId: uploadVideo
+      consumes:
+        - multipart/form-data
+      parameters:
+        - type: file
+          in: formData
+          name: upfile
+          description: The file to upload.
+          required: true
+      operationId: uploadVideoToEvent
       responses:
         201:
           description: OK
@@ -122,7 +116,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
 produces:
-- json
+- application/json
 schemes:
 - http
 swagger: "2.0"
