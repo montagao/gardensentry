@@ -30,9 +30,6 @@ func configureAPI(api *operations.GardensentryAPI) http.Handler {
 	// api.Logger = log.Printf
 
 	api.JSONConsumer = runtime.JSONConsumer()
-
-	api.MultipartformConsumer = runtime.DiscardConsumer
-
 	api.JSONProducer = runtime.JSONProducer()
 
 	if api.AddEventHandler == nil {
@@ -58,11 +55,6 @@ func configureAPI(api *operations.GardensentryAPI) http.Handler {
 	if api.UpdateEventHandler == nil {
 		api.UpdateEventHandler = operations.UpdateEventHandlerFunc(func(params operations.UpdateEventParams) middleware.Responder {
 			return middleware.NotImplemented("operation .UpdateEvent has not yet been implemented")
-		})
-	}
-	if api.UploadVideoToEventHandler == nil {
-		api.UploadVideoToEventHandler = operations.UploadVideoToEventHandlerFunc(func(params operations.UploadVideoToEventParams) middleware.Responder {
-			return middleware.NotImplemented("operation .UploadVideoToEvent has not yet been implemented")
 		})
 	}
 
