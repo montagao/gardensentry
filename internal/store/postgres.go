@@ -40,8 +40,10 @@ func New() (*EventStore, error) {
 
 func (s *EventStore) GetByID(id int64) (*models.Event, error) {
 	rows, err := s.db.Query("select * from events where id = $1;", id)
+	if err != nil {
+		return nil, err
+	}
 	if rows == nil || !rows.Next() {
-		log.Fatal("no rows found")
 		return nil, nil
 	}
 	var (

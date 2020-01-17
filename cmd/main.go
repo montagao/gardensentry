@@ -45,9 +45,8 @@ func main() {
 				VidURL:      params.Body.VidURL,
 			}
 			err := eventStore.Put(newEvent)
-			// TODO: Return errors
 			if err != nil {
-				log.Fatal(err)
+				log.Printf("%v", err)
 			}
 			return operations.NewAddEventCreated().WithPayload(newEvent)
 		})
@@ -56,7 +55,7 @@ func main() {
 		func(params operations.GetEventsParams) middleware.Responder {
 			events, err := eventStore.GetAll(int(*params.Limit))
 			if err != nil {
-				log.Fatal(err)
+				log.Printf("%v", err)
 			}
 			return operations.NewGetEventsOK().WithPayload(events)
 		})
@@ -65,7 +64,7 @@ func main() {
 		func(params operations.GetEventByIDParams) middleware.Responder {
 			event, err := eventStore.GetByID(params.ID)
 			if err != nil {
-				log.Fatal(err)
+				log.Printf("%v", err)
 			}
 
 			if event != nil {
@@ -79,7 +78,7 @@ func main() {
 		func(params operations.DeleteEventParams) middleware.Responder {
 			err := eventStore.Delete(params.ID)
 			if err != nil {
-				log.Fatal(err)
+				log.Printf("%v", err)
 			}
 
 			if err != nil {
