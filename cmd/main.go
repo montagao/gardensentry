@@ -83,7 +83,7 @@ func main() {
 			}
 
 			if err != nil {
-				return operations.NewGetEventByIDOK().WithPayload()
+				return operations.NewGetEventByIDOK().WithPayload(nil)
 			} else {
 				return operations.NewGetEventByIDDefault(404)
 			}
