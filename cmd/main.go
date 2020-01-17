@@ -2,28 +2,23 @@ package main
 
 import (
 	"flag"
-	"gardensentry-api/gen/models"
-	"gardensentry-api/gen/restapi"
-	"gardensentry-api/gen/restapi/operations"
 	"log"
 
+	"gardensentry.v1/gen/models"
+	"gardensentry.v1/gen/restapi"
+	"gardensentry.v1/gen/restapi/operations"
+	"gardensentry.v1/internal/store"
+	_ "github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/postgres"
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/runtime/middleware"
+	_ "github.com/lib/pq"
 )
 
 func main() {
+	eventStore, err := store.New()
+
 	//ctx := context.Background()
 	portFlag := flag.Int("port", 3000, "Port to run this service on")
-	var lastEventId int64
-	lastEventId = 0
-
-	/*
-		// init GCP SQL clients
-			storageClient, err := storage.NewClient(ctx)
-			if err != nil {
-				log.Fatalf("Failed to create client error: %v", err)
-			}
-	*/
 
 	// load embedded swagger file
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
@@ -41,48 +36,38 @@ func main() {
 	// set the port this service will be run on
 	server.Port = *portFlag
 
-	// TODO: use postgres db
-	// Mock data
-	events := []*models.Event{
-		&models.Event{
-			Description: nil,
-			ID:          lastEventId,
-			Timestamp:   nil,
-			Type:        nil,
-			VidURL:      "some-bucket-url",
-		},
-	}
-
-	// TODO: Set Handlers
 	api.AddEventHandler = operations.AddEventHandlerFunc(
 		func(params operations.AddEventParams) middleware.Responder {
-			lastEventId++
 			newEvent := &models.Event{
 				Description: params.Body.Description,
-				ID:          lastEventId,
 				Timestamp:   params.Body.Timestamp,
 				Type:        params.Body.Type,
 				VidURL:      params.Body.VidURL,
 			}
-
-			events = append(events, newEvent)
-
+			err := eventStore.Put(newEvent)
+			// TODO: Return errors
+			if err != nil {
+				log.Fatal(err)
+			}
 			return operations.NewAddEventCreated().WithPayload(newEvent)
 		})
 
 	api.GetEventsHandler = operations.GetEventsHandlerFunc(
 		func(params operations.GetEventsParams) middleware.Responder {
+			events, err := eventStore.GetAll(int(*params.Limit))
+			if err != nil {
+				log.Fatal(err)
+			}
 			return operations.NewGetEventsOK().WithPayload(events)
 		})
 
 	api.GetEventByIDHandler = operations.GetEventByIDHandlerFunc(
 		func(params operations.GetEventByIDParams) middleware.Responder {
-			var event *models.Event
-			for _, e := range events {
-				if e.ID == params.ID {
-					event = e
-				}
+			event, err := eventStore.GetByID(params.ID)
+			if err != nil {
+				log.Fatal(err)
 			}
+
 			if event != nil {
 				return operations.NewGetEventByIDOK().WithPayload(event)
 			} else {

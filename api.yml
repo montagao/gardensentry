@@ -9,10 +9,6 @@ paths:
     get:
       operationId: getEvents
       parameters:
-        - name: since
-          in: query
-          type: integer
-          format: int64
         - name: limit
           in: query
           type: integer
