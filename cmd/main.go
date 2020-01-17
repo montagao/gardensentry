@@ -18,7 +18,7 @@ func main() {
 	eventStore, err := store.New()
 
 	//ctx := context.Background()
-	portFlag := flag.Int("port", 3000, "Port to run this service on")
+	portFlag := flag.Int("port", 8000, "Port to run this service on")
 
 	// load embedded swagger file
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
@@ -75,6 +75,19 @@ func main() {
 			}
 		})
 
+	api.DeleteEventHandler = operations.DeleteEventHandlerFunc(
+		func(params operations.DeleteEventParams) middleware.Responder {
+			err := eventStore.Delete(params.ID)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			if err != nil {
+				return operations.NewGetEventByIDOK().WithPayload()
+			} else {
+				return operations.NewGetEventByIDDefault(404)
+			}
+		})
 	/* should handle video uploading directly from Pi. Then make vidUrl a required field for event POSTs
 	api.UploadVideoToEventHandler = operations.UploadVideoToEventHandlerFunc(
 		func(params operations.UploadVideoToEventParams) middleware.Responder {

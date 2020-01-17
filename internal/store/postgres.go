@@ -121,7 +121,7 @@ func (s *EventStore) Update(event *models.Event, id int) error {
 	return nil
 }
 
-func (s *EventStore) Delete(event *models.Event, id int) error {
+func (s *EventStore) Delete(id int64) error {
 	stmt, err := s.db.Prepare("DELETE from events where id = $5;")
 	defer stmt.Close()
 	if err != nil {
