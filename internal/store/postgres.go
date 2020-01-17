@@ -9,7 +9,6 @@ import (
 )
 
 const (
-	// use companion process as proxy
 	INSTANCE_CONNECTION_NAME = "35.196.103.90"
 	DATABASE_NAME            = "gs"
 	DATABASE_USER            = "postgres"
@@ -41,11 +40,10 @@ func New() (*EventStore, error) {
 
 func (s *EventStore) GetByID(id int64) (*models.Event, error) {
 	rows, err := s.db.Query("select * from events where id = $1;", id)
-	if rows == nil {
+	if rows == nil || !rows.Next() {
 		log.Fatal("no rows found")
 		return nil, nil
 	}
-	rows.Next()
 	var (
 		nullID      int
 		description string
