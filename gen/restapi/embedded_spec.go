@@ -158,46 +158,6 @@ func init() {
           "required": true
         }
       ]
-    },
-    "/v1/events/{id}/vids": {
-      "post": {
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "operationId": "uploadVideoToEvent",
-        "parameters": [
-          {
-            "type": "file",
-            "description": "The file to upload.",
-            "name": "upfile",
-            "in": "formData",
-            "required": true
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/event"
-            }
-          },
-          "default": {
-            "description": "error",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      },
-      "parameters": [
-        {
-          "type": "integer",
-          "format": "int64",
-          "name": "id",
-          "in": "path",
-          "required": true
-        }
-      ]
     }
   },
   "definitions": {
@@ -371,46 +331,6 @@ func init() {
         "responses": {
           "204": {
             "description": "Deleted"
-          },
-          "default": {
-            "description": "error",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      },
-      "parameters": [
-        {
-          "type": "integer",
-          "format": "int64",
-          "name": "id",
-          "in": "path",
-          "required": true
-        }
-      ]
-    },
-    "/v1/events/{id}/vids": {
-      "post": {
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "operationId": "uploadVideoToEvent",
-        "parameters": [
-          {
-            "type": "file",
-            "description": "The file to upload.",
-            "name": "upfile",
-            "in": "formData",
-            "required": true
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/event"
-            }
           },
           "default": {
             "description": "error",

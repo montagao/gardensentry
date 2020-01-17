@@ -23,21 +23,20 @@ import (
 // NewGardensentryAPI creates a new Gardensentry instance
 func NewGardensentryAPI(spec *loads.Document) *GardensentryAPI {
 	return &GardensentryAPI{
-		handlers:              make(map[string]map[string]http.Handler),
-		formats:               strfmt.Default,
-		defaultConsumes:       "application/json",
-		defaultProduces:       "application/json",
-		customConsumers:       make(map[string]runtime.Consumer),
-		customProducers:       make(map[string]runtime.Producer),
-		ServerShutdown:        func() {},
-		spec:                  spec,
-		ServeError:            errors.ServeError,
-		BasicAuthenticator:    security.BasicAuth,
-		APIKeyAuthenticator:   security.APIKeyAuth,
-		BearerAuthenticator:   security.BearerAuth,
-		JSONConsumer:          runtime.JSONConsumer(),
-		MultipartformConsumer: runtime.DiscardConsumer,
-		JSONProducer:          runtime.JSONProducer(),
+		handlers:            make(map[string]map[string]http.Handler),
+		formats:             strfmt.Default,
+		defaultConsumes:     "application/json",
+		defaultProduces:     "application/json",
+		customConsumers:     make(map[string]runtime.Consumer),
+		customProducers:     make(map[string]runtime.Producer),
+		ServerShutdown:      func() {},
+		spec:                spec,
+		ServeError:          errors.ServeError,
+		BasicAuthenticator:  security.BasicAuth,
+		APIKeyAuthenticator: security.APIKeyAuth,
+		BearerAuthenticator: security.BearerAuth,
+		JSONConsumer:        runtime.JSONConsumer(),
+		JSONProducer:        runtime.JSONProducer(),
 		AddEventHandler: AddEventHandlerFunc(func(params AddEventParams) middleware.Responder {
 			return middleware.NotImplemented("operation AddEvent has not yet been implemented")
 		}),
@@ -52,9 +51,6 @@ func NewGardensentryAPI(spec *loads.Document) *GardensentryAPI {
 		}),
 		UpdateEventHandler: UpdateEventHandlerFunc(func(params UpdateEventParams) middleware.Responder {
 			return middleware.NotImplemented("operation UpdateEvent has not yet been implemented")
-		}),
-		UploadVideoToEventHandler: UploadVideoToEventHandlerFunc(func(params UploadVideoToEventParams) middleware.Responder {
-			return middleware.NotImplemented("operation UploadVideoToEvent has not yet been implemented")
 		}),
 	}
 }
@@ -83,8 +79,6 @@ type GardensentryAPI struct {
 
 	// JSONConsumer registers a consumer for a "application/json" mime type
 	JSONConsumer runtime.Consumer
-	// MultipartformConsumer registers a consumer for a "multipart/form-data" mime type
-	MultipartformConsumer runtime.Consumer
 
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
@@ -99,8 +93,6 @@ type GardensentryAPI struct {
 	GetEventsHandler GetEventsHandler
 	// UpdateEventHandler sets the operation handler for the update event operation
 	UpdateEventHandler UpdateEventHandler
-	// UploadVideoToEventHandler sets the operation handler for the upload video to event operation
-	UploadVideoToEventHandler UploadVideoToEventHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -160,10 +152,6 @@ func (o *GardensentryAPI) Validate() error {
 		unregistered = append(unregistered, "JSONConsumer")
 	}
 
-	if o.MultipartformConsumer == nil {
-		unregistered = append(unregistered, "MultipartformConsumer")
-	}
-
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
 	}
@@ -186,10 +174,6 @@ func (o *GardensentryAPI) Validate() error {
 
 	if o.UpdateEventHandler == nil {
 		unregistered = append(unregistered, "UpdateEventHandler")
-	}
-
-	if o.UploadVideoToEventHandler == nil {
-		unregistered = append(unregistered, "UploadVideoToEventHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -227,9 +211,6 @@ func (o *GardensentryAPI) ConsumersFor(mediaTypes []string) map[string]runtime.C
 
 		case "application/json":
 			result["application/json"] = o.JSONConsumer
-
-		case "multipart/form-data":
-			result["multipart/form-data"] = o.MultipartformConsumer
 
 		}
 
@@ -317,11 +298,6 @@ func (o *GardensentryAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/v1/events/{id}"] = NewUpdateEvent(o.context, o.UpdateEventHandler)
-
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/v1/events/{id}/vids"] = NewUploadVideoToEvent(o.context, o.UploadVideoToEventHandler)
 
 }
 

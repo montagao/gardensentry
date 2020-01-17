@@ -13,7 +13,6 @@ For use with the Garden Sentry application
 
     Consumes:
     - application/json
-    - multipart/form-data
 
     Produces:
     - application/json

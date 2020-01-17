@@ -84,33 +84,6 @@ paths:
           description: error
           schema:
             $ref: "#/definitions/error"
-paths:
-  /v1/events/{id}/vids:
-    parameters:
-      - type: integer
-        format: int64
-        name: id
-        in: path
-        required: true
-    post:
-      consumes:
-        - multipart/form-data
-      parameters:
-        - type: file
-          in: formData
-          name: upfile
-          description: The file to upload.
-          required: true
-      operationId: uploadVideoToEvent
-      responses:
-        201:
-          description: OK
-          schema:
-            $ref: '#/definitions/event'
-        default:
-          description: error
-          schema:
-            $ref: '#/definitions/error'
 produces:
 - application/json
 schemes:
