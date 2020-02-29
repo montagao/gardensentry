@@ -180,8 +180,7 @@ func init() {
       "type": "object",
       "required": [
         "description",
-        "type",
-        "timestamp"
+        "type"
       ],
       "properties": {
         "description": {
@@ -371,8 +370,7 @@ func init() {
       "type": "object",
       "required": [
         "description",
-        "type",
-        "timestamp"
+        "type"
       ],
       "properties": {
         "description": {

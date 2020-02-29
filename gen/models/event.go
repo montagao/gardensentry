@@ -27,8 +27,7 @@ type Event struct {
 	ID int64 `json:"id,omitempty"`
 
 	// timestamp
-	// Required: true
-	Timestamp *string `json:"timestamp"`
+	Timestamp string `json:"timestamp,omitempty"`
 
 	// type
 	// Required: true
@@ -45,10 +44,6 @@ func (m *Event) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateDescription(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateTimestamp(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -73,15 +68,6 @@ func (m *Event) validateDescription(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("description", "body", string(*m.Description), 1); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *Event) validateTimestamp(formats strfmt.Registry) error {
-
-	if err := validate.Required("timestamp", "body", m.Timestamp); err != nil {
 		return err
 	}
 
