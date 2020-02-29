@@ -60,7 +60,7 @@ func (s *EventStore) GetByID(id int64) (*models.Event, error) {
 	e := &models.Event{
 		Description: &description,
 		ID:          id,
-		Timestamp:   &occured,
+		Timestamp:   occured,
 		Type:        &eventType,
 		VidURL:      vidURL,
 	}
@@ -90,7 +90,7 @@ func (s *EventStore) GetAll(limit int) ([]*models.Event, error) {
 		e := &models.Event{
 			Description: &description,
 			ID:          id,
-			Timestamp:   &occured,
+			Timestamp:   occured,
 			Type:        &eventType,
 			VidURL:      vidURL,
 		}
